@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Exam Planner – COMEDK · JEE Adv · BITSAT</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #080a10;
+  --surface: #0e1018;
+  --card: #12151f;
+  --card2: #161a26;
+  --border: #1e2333;
+  --border2: #252c40;
+  --gold: #f0b429;
+  --blue: #4f8ef7;
+  --green: #34d399;
+  --purple: #a78bfa;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --muted2: #8899aa;
+  --phys: #4f8ef7;
+  --chem: #f0b429;
+  --math: #34d399;
+  --rest: #a78bfa;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+
+/* ── HERO ── */
+.hero{
+  position:relative;padding:36px 32px 28px;
+  background:linear-gradient(135deg,#0e1018 0%,#111827 60%,#0a0e18 100%);
+  border-bottom:1px solid var(--border);overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 75% 50%,rgba(79,142,247,.07) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 60% at 15% 80%,rgba(240,180,41,.05) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+.hero-top{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;justify-content:space-between}
+.hero-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.hero-title .glow{color:var(--gold);text-shadow:0 0 24px rgba(240,180,41,.35)}
+.hero-sub{font-size:12px;color:var(--muted);margin-top:6px;letter-spacing:.3px}
+
+/* ── EXAM COUNTDOWN CARDS ── */
+.exam-cards{display:flex;gap:12px;flex-wrap:wrap}
+.exam-card{
+  background:var(--card);border:1px solid var(--border2);border-radius:16px;
+  padding:16px 20px;min-width:164px;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.exam-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.exam-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.exam-card.c1::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.exam-card.c2::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.exam-card.c3::before{background:linear-gradient(90deg,var(--green),transparent)}
+.exam-card.c1{border-top-color:rgba(240,180,41,.35)}
+.exam-card.c2{border-top-color:rgba(79,142,247,.35)}
+.exam-card.c3{border-top-color:rgba(52,211,153,.35)}
+
+.exam-name{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.exam-card.c1 .exam-name{color:var(--gold)}
+.exam-card.c2 .exam-name{color:var(--blue)}
+.exam-card.c3 .exam-name{color:var(--green)}
+
+.exam-days-row{display:flex;align-items:baseline;gap:4px}
+.exam-days-num{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;line-height:1;letter-spacing:-2px}
+.exam-card.c1 .exam-days-num{color:var(--gold)}
+.exam-card.c2 .exam-days-num{color:var(--blue)}
+.exam-card.c3 .exam-days-num{color:var(--green)}
+.exam-days-unit{font-size:11px;color:var(--muted);font-family:'Syne',sans-serif;font-weight:600}
+
+.exam-clock{
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;
+  margin-top:6px;color:var(--muted2);
+}
+.exam-date-str{font-size:10px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+
+/* SVG ring */
+.ring-wrap{position:absolute;right:14px;bottom:14px;width:42px;height:42px;opacity:.8}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--border2);stroke-width:3}
+.ring-fg{fill:none;stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1)}
+
+/* ── TAB BAR ── */
+.tab-bar{
+  display:flex;gap:0;
+  padding:0 32px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  overflow-x:auto;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.6px;text-transform:uppercase;
+  padding:14px 18px 12px;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--muted);white-space:nowrap;
+  position:relative;transition:color .2s;
+}
+.tab::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--gold);border-radius:2px 2px 0 0;
+  transform:scaleX(0);transition:transform .2s;
+}
+.tab.active{color:var(--text)}
+.tab.active::after{transform:scaleX(1)}
+.tab:hover:not(.active){color:var(--muted2)}
+
+/* ── CONTENT ── */
+.content{padding:24px 32px;max-width:1200px;margin:0 auto;position:relative;z-index:1}
+.panel{display:none;animation:fadeUp .25s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* section title */
+.section-title{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:16px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);color:var(--muted);
+}
+
+/* ── OVERVIEW ── */
+.ov-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.ov-stat{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;
+  position:relative;overflow:hidden;
+}
+.ov-stat::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:120px;height:120px;border-radius:50%;opacity:.04;
+}
+.ov-stat.sessions::after{background:var(--green)}
+.ov-stat.topics::after{background:var(--gold)}
+.ov-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.ov-val{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;line-height:1;letter-spacing:-2px}
+.ov-stat.sessions .ov-val{color:var(--green)}
+.ov-stat.topics .ov-val{color:var(--gold)}
+.ov-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* subject bars */
+.subj-bars{display:flex;flex-direction:column;gap:16px;margin-bottom:28px}
+.subj-bar-row{display:flex;flex-direction:column;gap:7px}
+.subj-bar-top{display:flex;justify-content:space-between;align-items:center}
+.subj-bar-name{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500}
+.subj-bar-name .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.subj-bar-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:800}
+.bar-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.bar-fill.phys{background:linear-gradient(90deg,#1d4ed8,#4f8ef7)}
+.bar-fill.chem{background:linear-gradient(90deg,#92400e,#f0b429)}
+.bar-fill.math{background:linear-gradient(90deg,#065f46,#34d399)}
+
+/* plan cards */
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.plan-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px 16px 16px 20px;position:relative;overflow:hidden;
+}
+.plan-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.plan-card.wk1::before{background:var(--chem)}
+.plan-card.wk2::before{background:var(--phys)}
+.plan-card.wk3::before{background:var(--math)}
+.plan-card.wk4::before{background:var(--purple)}
+.plan-card.wk5::before{background:var(--gold)}
+.plan-card h3{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;margin-bottom:10px}
+.plan-card ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.plan-card ul li{font-size:11px;color:var(--muted2);padding-left:12px;position:relative;line-height:1.5}
+.plan-card ul li::before{content:'›';position:absolute;left:0;color:var(--muted)}
+
+/* ── WEEK VIEW ── */
+.week-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.week-label{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.week-badge{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.badge-chem{background:rgba(240,180,41,.1);color:var(--chem);border:1px solid rgba(240,180,41,.2)}
+.badge-phys{background:rgba(79,142,247,.1);color:var(--phys);border:1px solid rgba(79,142,247,.2)}
+.badge-math{background:rgba(52,211,153,.1);color:var(--math);border:1px solid rgba(52,211,153,.2)}
+.badge-rev{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.badge-final{background:rgba(240,180,41,.1);color:var(--gold);border:1px solid rgba(240,180,41,.2)}
+
+.week-prog-wrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+.week-prog-label{font-size:11px;color:var(--muted)}
+.week-prog-pct{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--text)}
+.week-prog-bar{width:80px;height:4px;background:var(--border);border-radius:99px;overflow:hidden}
+.week-prog-fill{height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+
+.days-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:32px}
+
+.day-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;transition:border-color .2s,box-shadow .2s;
+}
+.day-card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.day-card.today{border-color:var(--gold);box-shadow:0 0 0 1px rgba(240,180,41,.1),0 4px 20px rgba(240,180,41,.08)}
+
+.day-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,var(--card2),var(--card));
+}
+.day-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800}
+.day-meta{font-size:10px;color:var(--muted);margin-top:2px}
+.today-badge{
+  font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:var(--gold);color:#000;padding:3px 9px;border-radius:99px;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(240,180,41,.5)}50%{box-shadow:0 0 0 5px rgba(240,180,41,0)}}
+
+.day-prog-bar{height:3px;background:var(--border)}
+.day-prog-fill{height:100%;background:var(--green);transition:width .4s}
+
+.session-list{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+.session{display:flex;gap:10px;align-items:stretch}
+.session-accent{width:3px;border-radius:99px;flex-shrink:0}
+.session-body{flex:1}
+.session-label{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.session-subject{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.session-time-chip{font-size:9px;color:var(--muted);background:var(--border);padding:1px 6px;border-radius:99px}
+
+.checkbox-wrap{display:flex;align-items:flex-start;gap:8px;cursor:pointer;width:100%}
+.checkbox-wrap input{display:none}
+.custom-cb{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+  flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.checkbox-wrap.done .custom-cb{background:var(--green);border-color:var(--green)}
+.check-icon{display:none}
+.checkbox-wrap.done .check-icon{display:block}
+.session-topic{font-size:12px;color:var(--text);line-height:1.45;transition:color .2s}
+.checkbox-wrap.done .session-topic{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(100,116,139,.4)}
+
+.ac-phys{background:var(--phys)}.ac-chem{background:var(--chem)}.ac-math{background:var(--math)}.ac-rest{background:var(--purple)}
+.tc-phys{color:var(--phys)}.tc-chem{color:var(--chem)}.tc-math{color:var(--math)}.tc-rest{color:var(--purple)}
+
+/* ── TOPICS ── */
+.checklist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.checklist-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.checklist-head{
+  padding:14px 16px 10px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.checklist-head h3{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;display:flex;align-items:center;gap:7px}
+.hdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cl-pct-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(52,211,153,.1);color:var(--green)}
+.cl-track{height:3px;background:var(--border)}
+.cl-fill{height:100%;transition:width .4s}
+.cl-items{padding:4px 0}
+.checklist-item{
+  display:flex;align-items:center;gap:10px;padding:7px 16px;cursor:pointer;
+  border-bottom:1px solid var(--border);transition:background .15s;
+}
+.checklist-item:last-child{border-bottom:none}
+.checklist-item:hover{background:rgba(255,255,255,.02)}
+.cl-cb{
+  width:14px;height:14px;border-radius:3px;border:1.5px solid var(--border2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;
+  transition:all .15s;
+}
+.checklist-item.done .cl-cb{background:var(--green);border-color:var(--green);color:#000}
+.checklist-item span{font-size:12px;transition:color .2s;line-height:1.4}
+.checklist-item.done span{color:var(--muted);text-decoration:line-through}
+
+/* ── TIPS ── */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden}
+.tip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent)}
+.tip-card h3{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;margin-bottom:12px}
+.tip-card ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.tip-card ul li{font-size:12px;color:var(--muted2);padding-left:16px;position:relative;line-height:1.5}
+.tip-card ul li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:11px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hero{padding:20px 16px 18px}
+  .tab-bar{padding:0 16px}
+  .content{padding:16px}
+  .days-grid{grid-template-columns:1fr}
+  .ov-top{grid-template-columns:1fr 1fr}
+  .exam-card{min-width:130px;padding:12px 14px}
+  .exam-days-num{font-size:30px}
+}
+@media(max-width:480px){
+  .ov-top{grid-template-columns:1fr}
+  .hero-title{font-size:22px}
+  .exam-cards{gap:8px}
+}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div>
+        <div class="hero-title">📚 Exam <span class="glow">Planner</span></div>
+        <div class="hero-sub">Your 35-day roadmap · COMEDK · JEE Advanced · BITSAT 2</div>
+      </div>
+      <div class="exam-cards">
+
+        <div class="exam-card c1">
+          <div class="exam-name">COMEDK</div>
+          <div class="exam-days-row">
+            <div class="exam-days-num" id="c1-days">–</div>
+            <div class="exam-days-unit">days</div>
+          </div>
+          <div class="exam-clock" id="c1-clock">loading…</div>
+          <div class="exam-date-str">📅 May 9, 2025</div>
+          <div class="ring-wrap">
+            <svg width="42" height="42" viewBox="0 0 42 42">
+              <circle class="ring-bg" cx="21" cy="21" r="17"/>
+              <circle class="ring-fg" id="ring1" cx="21" cy="21" r="17" stroke="var(--gold)"
+                stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="exam-card c2">
+          <div class="exam-name">JEE ADV</div>
+          <div class="exam-days-row">
+            <div class="exam-days-num" id="c2-days">–</div>
+            <div class="exam-days-unit">days</div>
+          </div>
+          <div class="exam-clock" id="c2-clock">loading…</div>
+          <div class="exam-date-str">📅 May 17, 2025</div>
+          <div class="ring-wrap">
+            <svg width="42" height="42" viewBox="0 0 42 42">
+              <circle class="ring-bg" cx="21" cy="21" r="17"/>
+              <circle class="ring-fg" id="ring2" cx="21" cy="21" r="17" stroke="var(--blue)"
+                stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="exam-card c3">
+          <div class="exam-name">BITSAT 2</div>
+          <div class="exam-days-row">
+            <div class="exam-days-num" id="c3-days">–</div>
+            <div class="exam-days-unit">days</div>
+          </div>
+          <div class="exam-clock" id="c3-clock">loading…</div>
+          <div class="exam-date-str">📅 May 25, 2025</div>
+          <div class="ring-wrap">
+            <svg width="42" height="42" viewBox="0 0 42 42">
+              <circle class="ring-bg" cx="21" cy="21" r="17"/>
+              <circle class="ring-fg" id="ring3" cx="21" cy="21" r="17" stroke="var(--green)"
+                stroke-dasharray="106.8" stroke-dashoffset="106.8"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab active" onclick="showPanel('overview',this)">Overview</button>
+  <button class="tab" onclick="showPanel('week1',this)">Week 1 · Chem</button>
+  <button class="tab" onclick="showPanel('week2',this)">Week 2 · Physics</button>
+  <button class="tab" onclick="showPanel('week3',this)">Week 3 · Maths</button>
+  <button class="tab" onclick="showPanel('week4',this)">Week 4 · Mixed</button>
+  <button class="tab" onclick="showPanel('week5',this)">Week 5 · Final</button>
+  <button class="tab" onclick="showPanel('topics',this)">Topics</button>
+  <button class="tab" onclick="showPanel('tips',this)">Strategy</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- OVERVIEW -->
+  <div class="panel active" id="panel-overview">
+    <div class="ov-top">
+      <div class="ov-stat sessions">
+        <div class="ov-label">Sessions Done</div>
+        <div class="ov-val" id="ov-done">0</div>
+        <div class="ov-sub" id="ov-sub">of 0 total sessions</div>
+      </div>
+      <div class="ov-stat topics">
+        <div class="ov-label">Topics Ticked</div>
+        <div class="ov-val" id="ov-topics">0</div>
+        <div class="ov-sub" id="ov-topics-sub">of 0 total topics</div>
+      </div>
+    </div>
+
+    <div class="section-title">Subject Progress</div>
+    <div class="subj-bars">
+      <div class="subj-bar-row">
+        <div class="subj-bar-top">
+          <div class="subj-bar-name"><div class="dot" style="background:var(--chem)"></div>🧪 Chemistry</div>
+          <div class="subj-bar-pct" id="pct-chem" style="color:var(--chem)">0%</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill chem" id="bar-chem" style="width:0%"></div></div>
+      </div>
+      <div class="subj-bar-row">
+        <div class="subj-bar-top">
+          <div class="subj-bar-name"><div class="dot" style="background:var(--phys)"></div>⚛️ Physics</div>
+          <div class="subj-bar-pct" id="pct-phys" style="color:var(--phys)">0%</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill phys" id="bar-phys" style="width:0%"></div></div>
+      </div>
+      <div class="subj-bar-row">
+        <div class="subj-bar-top">
+          <div class="subj-bar-name"><div class="dot" style="background:var(--math)"></div>📐 Mathematics</div>
+          <div class="subj-bar-pct" id="pct-math" style="color:var(--math)">0%</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill math" id="bar-math" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="section-title">5-Week Plan at a Glance</div>
+    <div class="plan-grid">
+      <div class="plan-card wk1">
+        <h3 style="color:var(--chem)">🧪 Week 1 · Apr 5–11 — Chemistry</h3>
+        <ul>
+          <li>Organic: GOC → Hydrocarbons → Functional groups → Named reactions</li>
+          <li>Inorganic: s/p/d-block → Coordination compounds (NCERT)</li>
+          <li>~3.5 hrs Chemistry/day + 1 hr light Maths warmup</li>
+          <li>Day 7: Full revision + PYQs only (no new topics)</li>
+        </ul>
+      </div>
+      <div class="plan-card wk2">
+        <h3 style="color:var(--phys)">⚛️ Week 2 · Apr 12–18 — Physics</h3>
+        <ul>
+          <li>Mechanics: Kinematics → Newton → Rotation → SHM → Waves</li>
+          <li>Electrostatics, Magnetism, EMI, AC circuits</li>
+          <li>Optics + Modern Physics + Thermodynamics</li>
+          <li>1 hr Chem revision daily to retain Week 1 gains</li>
+        </ul>
+      </div>
+      <div class="plan-card wk3">
+        <h3 style="color:var(--math)">📐 Week 3 · Apr 19–25 — Maths</h3>
+        <ul>
+          <li>Calculus: Limits → Differentiation → Integration → DE</li>
+          <li>Coordinate Geometry: Conics, Straight Lines</li>
+          <li>Vectors, 3D Geometry, Probability, PnC</li>
+          <li>1 hr Physics revision daily</li>
+        </ul>
+      </div>
+      <div class="plan-card wk4">
+        <h3 style="color:var(--purple)">🔄 Week 4 · Apr 26–May 2 — Mixed</h3>
+        <ul>
+          <li>All 3 subjects in rotation</li>
+          <li>2 full COMEDK mock tests (180Q, 3 hrs each)</li>
+          <li>BITSAT speed drills (150Q under 3 hrs)</li>
+          <li>Error log + targeted weak-spot days</li>
+        </ul>
+      </div>
+      <div class="plan-card wk5">
+        <h3 style="color:var(--gold)">🚀 Week 5 · May 3–9 — Final Sprint</h3>
+        <ul>
+          <li>Formula sheets only — zero new topics</li>
+          <li>JEE Advanced mock (Paper 1 + Paper 2)</li>
+          <li>🎯 COMEDK on May 9</li>
+          <li>JEE Adv May 17 · BITSAT 2 May 25</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 1 -->
+  <div class="panel" id="panel-week1">
+    <div class="week-header">
+      <div class="week-label">Week 1</div>
+      <div class="week-badge badge-chem">🧪 Chemistry Focus</div>
+      <div class="week-badge badge-chem">Apr 5 → Apr 11</div>
+      <div class="week-prog-wrap">
+        <span class="week-prog-label">Progress</span>
+        <div class="week-prog-bar"><div class="week-prog-fill" id="wpf1" style="width:0%"></div></div>
+        <span class="week-prog-pct" id="wp1">0%</span>
+      </div>
+    </div>
+    <div class="days-grid" id="week1-days"></div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="panel" id="panel-week2">
+    <div class="week-header">
+      <div class="week-label">Week 2</div>
+      <div class="week-badge badge-phys">⚛️ Physics Focus</div>
+      <div class="week-badge badge-phys">Apr 12 → Apr 18</div>
+      <div class="week-prog-wrap">
+        <span class="week-prog-label">Progress</span>
+        <div class="week-prog-bar"><div class="week-prog-fill" id="wpf2" style="width:0%"></div></div>
+        <span class="week-prog-pct" id="wp2">0%</span>
+      </div>
+    </div>
+    <div class="days-grid" id="week2-days"></div>
+  </div>
+
+  <!-- WEEK 3 -->
+  <div class="panel" id="panel-week3">
+    <div class="week-header">
+      <div class="week-label">Week 3</div>
+      <div class="week-badge badge-math">📐 Maths Focus</div>
+      <div class="week-badge badge-math">Apr 19 → Apr 25</div>
+      <div class="week-prog-wrap">
+        <span class="week-prog-label">Progress</span>
+        <div class="week-prog-bar"><div class="week-prog-fill" id="wpf3" style="width:0%"></div></div>
+        <span class="week-prog-pct" id="wp3">0%</span>
+      </div>
+    </div>
+    <div class="days-grid" id="week3-days"></div>
+  </div>
+
+  <!-- WEEK 4 -->
+  <div class="panel" id="panel-week4">
+    <div class="week-header">
+      <div class="week-label">Week 4</div>
+      <div class="week-badge badge-rev">🔄 Mixed + Mocks</div>
+      <div class="week-badge badge-rev">Apr 26 → May 2</div>
+      <div class="week-prog-wrap">
+        <span class="week-prog-label">Progress</span>
+        <div class="week-prog-bar"><div class="week-prog-fill" id="wpf4" style="width:0%"></div></div>
+        <span class="week-prog-pct" id="wp4">0%</span>
+      </div>
+    </div>
+    <div class="days-grid" id="week4-days"></div>
+  </div>
+
+  <!-- WEEK 5 -->
+  <div class="panel" id="panel-week5">
+    <div class="week-header">
+      <div class="week-label">Week 5</div>
+      <div class="week-badge badge-final">🚀 Final Revision</div>
+      <div class="week-badge badge-final">May 3 → May 9</div>
+      <div class="week-prog-wrap">
+        <span class="week-prog-label">Progress</span>
+        <div class="week-prog-bar"><div class="week-prog-fill" id="wpf5" style="width:0%"></div></div>
+        <span class="week-prog-pct" id="wp5">0%</span>
+      </div>
+    </div>
+    <div class="days-grid" id="week5-days"></div>
+  </div>
+
+  <!-- TOPICS -->
+  <div class="panel" id="panel-topics">
+    <div class="section-title">Topic Checklist — Click to mark complete</div>
+    <div class="checklist-grid" id="checklist-root"></div>
+  </div>
+
+  <!-- STRATEGY -->
+  <div class="panel" id="panel-tips">
+    <div class="section-title">Study Strategy & Tips</div>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <h3>🧪 Organic Chem — Fixing Your Weak Spot</h3>
+        <ul>
+          <li>Understand mechanism first — GOC is the master key to all reactions</li>
+          <li>Make a 1-page "Named Reactions" sheet: Aldol, Cannizzaro, Clemmensen, Reimer-Tiemann, Kolbe…</li>
+          <li>After each chapter, do 10–15 PYQs before moving on</li>
+          <li>Day 7 of Week 1 is Organic revision day — don't skip it</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>🪨 Inorganic — NCERT is the Bible</h3>
+        <ul>
+          <li>Most inorganic JEE/COMEDK Qs are directly lifted from NCERT</li>
+          <li>Make trend tables for p-block (acidity, basicity, oxidation states)</li>
+          <li>Coordination: IUPAC naming + isomerism types + VBT/CFT concepts</li>
+          <li>Colour code notes by block — visual memory helps a lot</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>⚛️ Physics — High Yield Topics</h3>
+        <ul>
+          <li>Mechanics = 30–35% of JEE Adv Physics → master it absolutely</li>
+          <li>Electrostatics + Magnetism = biggest COMEDK chunk → do thoroughly</li>
+          <li>Modern Physics (photoelectric, Bohr, radioactivity) is scoring — easy marks</li>
+          <li>Solve last 5 years JEE Adv Physics papers for question patterns</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>📐 Maths — Speed is Key for BITSAT</h3>
+        <ul>
+          <li>Calculus (limits, integration) = biggest chapter, most questions across all 3 exams</li>
+          <li>Coordinate geometry = easiest scoring, prioritize for quick marks</li>
+          <li>Probability + PnC appear every year in JEE Adv — Bayes theorem is must</li>
+          <li>For BITSAT: practice 150Q in under 3 hrs at least twice before exam</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>🕐 Ideal Daily Schedule</h3>
+        <ul>
+          <li>6:30–8:00 AM — Hardest topic (fresh brain = deep work)</li>
+          <li>9:00–11:30 AM — Theory + worked examples</li>
+          <li>3:00–5:30 PM — Problems + PYQ practice</li>
+          <li>7:00–8:00 PM — Formulae/concept quick review</li>
+          <li>No phone after 9 PM. Sleep by 10:30 PM minimum.</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>🎯 Exam-Specific Rules</h3>
+        <ul>
+          <li>COMEDK: No negative marking → attempt ALL 180 questions, guess if unsure</li>
+          <li>JEE Adv: Read marking scheme carefully, partial marks available in some Qs</li>
+          <li>BITSAT: 150Q + 12 bonus Qs at end — speed drills are non-negotiable</li>
+          <li>Never study new material the evening before any exam</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>📝 Mock Test Strategy</h3>
+        <ul>
+          <li>Week 4: 2× full COMEDK mocks (180Q, strictly timed 3 hrs)</li>
+          <li>Week 5: 1× JEE Adv mock — attempt both papers in one day</li>
+          <li>After every mock: analyse wrong answers before checking solutions</li>
+          <li>Maintain error log — note which chapter each mistake belongs to</li>
+        </ul>
+      </div>
+      <div class="tip-card">
+        <h3>🧠 Memory & Retention</h3>
+        <ul>
+          <li>Spaced repetition: revisit a topic after 1 day, 3 days, 1 week</li>
+          <li>Teach it out loud — if you can't explain it simply, you don't know it</li>
+          <li>Write formula sheets by hand, not typed — motor memory is real</li>
+          <li>7+ hrs sleep is non-negotiable — memory consolidates only during sleep</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+// ─── EXAM DATES ───────────────────────────────────────────────────
+// Using actual current system time for countdown
+// ─── UPDATED EXAM DATES FOR 2026 ───────────────────────────────────
+const EXAMS = [
+  { days_id:'c1-days', clock_id:'c1-clock', ring_id:'ring1', date: new Date(2026,4,9,9,0,0)  }, // May 9, 2026
+  { days_id:'c2-days', clock_id:'c2-clock', ring_id:'ring2', date: new Date(2026,4,17,9,0,0) }, // May 17, 2026
+  { days_id:'c3-days', clock_id:'c3-clock', ring_id:'ring3', date: new Date(2026,4,25,9,0,0) }, // May 25, 2026
+];
+
+// Update the plan start to April 5, 2026
+const PLAN_START = new Date(2026,3,5,0,0,0);
+const CIRC = 106.8; // 2*pi*17
+
+function pad2(n){ return String(Math.floor(n)).padStart(2,'0') }
+
+function tick(){
+  const now = new Date();
+  EXAMS.forEach(ex => {
+    const diff = ex.date - now;          // ms
+    const dEl  = document.getElementById(ex.days_id);
+    const cEl  = document.getElementById(ex.clock_id);
+    const rEl  = document.getElementById(ex.ring_id);
+    if(!dEl) return;
+
+    if(diff <= 0){
+      dEl.textContent = '0';
+      cEl.textContent = 'Exam day! 🎯';
+      if(rEl) rEl.style.strokeDashoffset = '0';
+      return;
+    }
+
+    const totalSec = diff / 1000;
+    const d  = Math.floor(totalSec / 86400);
+    const h  = Math.floor((totalSec % 86400) / 3600);
+    const m  = Math.floor((totalSec % 3600)  / 60);
+    const s  = Math.floor(totalSec % 60);
+
+    dEl.textContent  = d;
+    cEl.textContent  = `${pad2(h)}h ${pad2(m)}m ${pad2(s)}s`;
+
+    // ring = fraction of total study span elapsed
+    const span    = ex.date - PLAN_START;
+    const elapsed = now    - PLAN_START;
+    const frac    = Math.min(1, Math.max(0, elapsed / span));
+    if(rEl) rEl.style.strokeDashoffset = CIRC - frac * CIRC;
+  });
+}
+tick();
+setInterval(tick, 1000);
+
+// ─── HELPERS ──────────────────────────────────────────────────────
+const DAY_N = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MON_N = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dateFromStart(n){ const d=new Date(PLAN_START); d.setDate(d.getDate()+n); return d; }
+function fmtDate(d){ return `${DAY_N[d.getDay()]}, ${d.getDate()} ${MON_N[d.getMonth()]}`; }
+function isToday(d){
+  const n=new Date();
+  return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
+}
+
+// ─── WEEK DATA ────────────────────────────────────────────────────
+const weeks = {
+  week1:[
+    {sessions:[
+      {sub:'chem',topic:'GOC – Inductive, Resonance, Hyperconjugation effects',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – s-block & Hydrogen (full NCERT)',time:'1.5 hrs'},
+      {sub:'math',topic:'Algebra warm-up – Quadratics, Complex numbers revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'Organic – Structural & Stereoisomerism',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – p-block Groups 13 & 14',time:'1.5 hrs'},
+      {sub:'math',topic:'Sequences & Series – 20 problems',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'Organic – Hydrocarbons (Alkanes, Alkenes, Alkynes reactions)',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – p-block Groups 15 & 16',time:'1.5 hrs'},
+      {sub:'math',topic:'Binomial theorem + PnC basics',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'Organic – Haloalkanes & Haloarenes; SN1/SN2 mechanisms',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – p-block Groups 17 & 18 (Halogens, Noble gases)',time:'1.5 hrs'},
+      {sub:'math',topic:'Matrices & Determinants revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'Organic – Alcohols, Phenols, Ethers + all reactions',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – d-block & Transition elements',time:'1.5 hrs'},
+      {sub:'math',topic:'Trigonometry identities + 20 problems',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'Organic – Aldehydes, Ketones; Aldol, Cannizzaro, Clemmensen',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – Coordination Compounds (IUPAC, Isomerism, VBT/CFT)',time:'1.5 hrs'},
+      {sub:'math',topic:'Coordinate Geometry – Straight Lines',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'chem',topic:'🔁 Organic REVISION – All chapters + 30 PYQs',time:'2.5 hrs'},
+      {sub:'chem',topic:'🔁 Inorganic REVISION – Trend tables + NCERT highlights + 20 PYQs',time:'2 hrs'},
+      {sub:'rest',topic:'Rest / Very light revision only',time:'30 min'},
+    ]},
+  ],
+  week2:[
+    {sessions:[
+      {sub:'phys',topic:'Kinematics – 1D, 2D, Projectile Motion',time:'2 hrs'},
+      {sub:'phys',topic:'Newton\'s Laws + Friction + Pseudo forces',time:'1.5 hrs'},
+      {sub:'chem',topic:'Organic – Carboxylic Acids & Amines (quick revision)',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Work, Energy, Power + Collisions (elastic/inelastic)',time:'2 hrs'},
+      {sub:'phys',topic:'Rotational Motion – Torque, MOI, Angular momentum, Rolling',time:'1.5 hrs'},
+      {sub:'chem',topic:'Inorganic – Metallurgy & Extraction (NCERT)',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Gravitation – Kepler\'s laws, escape velocity, satellites',time:'2 hrs'},
+      {sub:'phys',topic:'SHM + Waves & Sound (Doppler, beats, resonance)',time:'1.5 hrs'},
+      {sub:'chem',topic:'Biomolecules + Polymers (NCERT quick read)',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Electrostatics – Coulomb, Electric field, Potential, Gauss\'s law, Capacitors',time:'2.5 hrs'},
+      {sub:'phys',topic:'Current Electricity – Ohm, Kirchhoff, Wheatstone, Potentiometer',time:'1.5 hrs'},
+      {sub:'chem',topic:'Carbohydrates + Chemistry in everyday life (light read)',time:'30 min'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Magnetism – Biot-Savart, Ampere\'s law, Force on conductors',time:'2 hrs'},
+      {sub:'phys',topic:'Electromagnetic Induction + AC Circuits (LCR, resonance)',time:'1.5 hrs'},
+      {sub:'math',topic:'Integration – standard forms + substitution',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Ray Optics – mirrors, lenses, prisms, TIR',time:'2 hrs'},
+      {sub:'phys',topic:'Wave Optics – YDSE, Diffraction, Polarisation',time:'1.5 hrs'},
+      {sub:'math',topic:'Limits & Continuity – 20 problems',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Modern Physics – Photoelectric, Bohr model, Radioactivity, Semiconductors',time:'2 hrs'},
+      {sub:'phys',topic:'Thermodynamics + Kinetic Theory of Gases',time:'1.5 hrs'},
+      {sub:'phys',topic:'🔁 Physics PYQs – 30 mixed questions',time:'1 hr'},
+    ]},
+  ],
+  week3:[
+    {sessions:[
+      {sub:'math',topic:'Limits, Continuity & Differentiability – complete chapter',time:'2.5 hrs'},
+      {sub:'math',topic:'Applications of Derivatives – Tangents, Maxima/Minima',time:'1.5 hrs'},
+      {sub:'phys',topic:'Mechanics PYQ revision – 20 questions',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Integration – indefinite, standard substitutions, integration by parts',time:'2 hrs'},
+      {sub:'math',topic:'Definite integrals + Properties + King\'s rule',time:'1.5 hrs'},
+      {sub:'phys',topic:'Electrostatics & Magnetism quick revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Differential Equations – order/degree, variable separable, linear first order',time:'2 hrs'},
+      {sub:'math',topic:'Area under curves',time:'1.5 hrs'},
+      {sub:'chem',topic:'Physical Chemistry – Thermodynamics & Equilibrium revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Circles, Parabola – tangent, normal, chord of contact',time:'2.5 hrs'},
+      {sub:'math',topic:'Ellipse + Hyperbola – standard results & PYQs',time:'1.5 hrs'},
+      {sub:'phys',topic:'Modern Physics revision + 15 PYQs',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Vectors – dot product, cross product, scalar triple product',time:'2 hrs'},
+      {sub:'math',topic:'3D Geometry – lines, planes, angles & distances',time:'1.5 hrs'},
+      {sub:'chem',topic:'Electrochemistry + Surface Chemistry revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Probability – Bayes, distributions, expected value',time:'2 hrs'},
+      {sub:'math',topic:'PnC + Mathematical Reasoning',time:'1.5 hrs'},
+      {sub:'phys',topic:'Optics revision + 15 PYQs',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'🔁 Maths REVISION – Calculus notes review + 20 Qs',time:'2 hrs'},
+      {sub:'math',topic:'🔁 Maths REVISION – Algebra + Geometry PYQs (30 Qs)',time:'2 hrs'},
+      {sub:'rest',topic:'Evening off – walk, rest, no screens',time:'–'},
+    ]},
+  ],
+  week4:[
+    {sessions:[
+      {sub:'phys',topic:'Physics full-set – 30 Qs (JEE Adv pattern, timed)',time:'2 hrs'},
+      {sub:'chem',topic:'Chemistry full-set – 30 Qs (timed)',time:'1.5 hrs'},
+      {sub:'math',topic:'Maths full-set – 30 Qs (timed)',time:'1.5 hrs'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'Mock analysis – review every wrong answer carefully',time:'2 hrs'},
+      {sub:'phys',topic:'Targeted Physics revision from mock errors',time:'1.5 hrs'},
+      {sub:'chem',topic:'Targeted Chemistry revision from mock errors',time:'1.5 hrs'},
+    ]},
+    {sessions:[
+      {sub:'math',topic:'Targeted Maths revision + 20 practice problems',time:'2 hrs'},
+      {sub:'phys',topic:'BITSAT Physics speed drill – 30 Qs in 25 minutes',time:'1.5 hrs'},
+      {sub:'chem',topic:'BITSAT Chemistry speed drill – 30 Qs in 25 minutes',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'🎯 COMEDK Mock Test 1 – 180 Qs, strictly 3 hrs timed',time:'3 hrs'},
+      {sub:'rest',topic:'Mock analysis + rest',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic quick notes refresh',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Mechanics + Electrostatics mixed problems – 25 Qs',time:'2 hrs'},
+      {sub:'math',topic:'Calculus + Coordinate Geometry mixed – 25 Qs',time:'1.5 hrs'},
+      {sub:'chem',topic:'Organic named reactions – flashcard rapid fire',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'🎯 COMEDK Mock Test 2 – 180 Qs, fully timed',time:'3 hrs'},
+      {sub:'rest',topic:'Mock analysis – document weak spots for final week',time:'2 hrs'},
+      {sub:'rest',topic:'Early sleep, light walk',time:'–'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'JEE Adv style – Comprehension + Multi-correct (Physics)',time:'2 hrs'},
+      {sub:'math',topic:'JEE Adv style – Integer type + Matrix match (Maths)',time:'1.5 hrs'},
+      {sub:'chem',topic:'Write out Organic reactions master sheet by hand',time:'1 hr'},
+    ]},
+  ],
+  week5:[
+    {sessions:[
+      {sub:'phys',topic:'Physics formula sheet – all chapters (write by hand)',time:'2 hrs'},
+      {sub:'math',topic:'Maths formula sheet – all chapters (write by hand)',time:'1.5 hrs'},
+      {sub:'chem',topic:'Chemistry formula sheet – Organic + Physical',time:'1.5 hrs'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'🎯 JEE Advanced Mock – Paper 1 (3 hrs timed)',time:'3 hrs'},
+      {sub:'rest',topic:'Rest + light analysis',time:'2 hrs'},
+      {sub:'chem',topic:'Inorganic – coordination + p-block 1 hr flash revision',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'🎯 JEE Advanced Mock – Paper 2 (3 hrs timed)',time:'3 hrs'},
+      {sub:'rest',topic:'Analysis + update error log',time:'2 hrs'},
+      {sub:'phys',topic:'Thermodynamics + SHM final look',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Physics – top formulae per chapter, speed run',time:'1.5 hrs'},
+      {sub:'math',topic:'Maths – key formulae + 15 mixed problems',time:'1.5 hrs'},
+      {sub:'chem',topic:'Chemistry – PYQs 2022–24, 30 mixed Qs',time:'1.5 hrs'},
+    ]},
+    {sessions:[
+      {sub:'phys',topic:'Light revision – formula sheets only, no new topics',time:'1.5 hrs'},
+      {sub:'chem',topic:'Named reactions + Inorganic periodic trends (flashcards)',time:'1.5 hrs'},
+      {sub:'math',topic:'Probability + Vectors last look',time:'1 hr'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'Formula sheets only – 2 hrs max study today',time:'2 hrs'},
+      {sub:'rest',topic:'Pack hall ticket + ID. Sleep by 10 PM. You\'re ready. 💪',time:'Relax'},
+    ]},
+    {sessions:[
+      {sub:'rest',topic:'🎉 COMEDK EXAM DAY — Go give your absolute best!',time:'Exam'},
+    ]},
+  ],
+};
+
+// ─── TOPICS ──────────────────────────────────────────────────────
+const topicsData = [
+  {title:'Organic Chemistry',sub:'chem',items:[
+    'GOC – Inductive, Resonance, Hyperconjugation',
+    'Isomerism – Structural & Stereoisomerism',
+    'Hydrocarbons (Alkanes, Alkenes, Alkynes)',
+    'Aromatic Compounds & EAS',
+    'Haloalkanes & Haloarenes (SN1, SN2, E2)',
+    'Alcohols, Phenols & Ethers',
+    'Aldehydes, Ketones & Named Reactions',
+    'Carboxylic Acids & Derivatives',
+    'Amines & Diazonium Salts',
+    'Biomolecules & Polymers',
+  ]},
+  {title:'Inorganic Chemistry',sub:'chem',items:[
+    'Periodic Table – Trends & Properties',
+    's-Block (Alkali & Alkaline Earth Metals)',
+    'p-Block Groups 13 & 14',
+    'p-Block Groups 15 & 16',
+    'p-Block Groups 17 & 18',
+    'd-Block & Transition Elements',
+    'Coordination Compounds (IUPAC, VBT, CFT)',
+    'Metallurgy & Extraction',
+    'Environmental Chemistry',
+  ]},
+  {title:'Physical Chemistry',sub:'chem',items:[
+    'Mole Concept & Stoichiometry',
+    'Atomic Structure & Quantum Numbers',
+    'Chemical Bonding (VSEPR, MO Theory)',
+    'Thermodynamics (Laws, Hess\'s Law)',
+    'Chemical & Ionic Equilibrium',
+    'Electrochemistry (Nernst Equation)',
+    'Chemical Kinetics (Rate Laws)',
+    'Solutions & Colligative Properties',
+    'Surface Chemistry',
+  ]},
+  {title:'Physics – Mechanics',sub:'phys',items:[
+    'Kinematics – 1D, 2D, Projectile',
+    'Newton\'s Laws & Friction',
+    'Work, Energy & Power',
+    'Momentum & Collisions',
+    'Rotational Motion (Torque, MOI)',
+    'Gravitation & Satellites',
+    'SHM – Springs & Pendulum',
+    'Waves & Sound (Doppler)',
+    'Fluid Mechanics & Elasticity',
+  ]},
+  {title:'Physics – Electromagnetism',sub:'phys',items:[
+    'Coulomb\'s Law & Electric Field',
+    'Electric Potential & Gauss\'s Law',
+    'Capacitors (Series, Parallel, Energy)',
+    'Current Electricity & Kirchhoff\'s Laws',
+    'Magnetism (Biot-Savart, Ampere)',
+    'Force on Charge/Current in Mag. Field',
+    'Electromagnetic Induction',
+    'Alternating Current – LCR & Resonance',
+  ]},
+  {title:'Physics – Modern & Optics',sub:'phys',items:[
+    'Ray Optics – Mirrors, Lenses, TIR',
+    'Wave Optics – YDSE, Diffraction',
+    'Photoelectric Effect & de Broglie',
+    'Bohr Model & Hydrogen Spectrum',
+    'Nuclear Physics & Radioactivity',
+    'Semiconductors & Logic Gates',
+    'Thermodynamics (Laws, Carnot, KTG)',
+  ]},
+  {title:'Maths – Calculus',sub:'math',items:[
+    'Limits, Continuity & Differentiability',
+    'Differentiation (chain rule, implicit)',
+    'Applications of Derivatives',
+    'Integration – Indefinite',
+    'Integration – Definite & Properties',
+    'Area Under Curves',
+    'Differential Equations',
+  ]},
+  {title:'Maths – Algebra & Others',sub:'math',items:[
+    'Complex Numbers & Quadratics',
+    'Sequences & Series (AP/GP/HP)',
+    'Binomial Theorem',
+    'Matrices & Determinants',
+    'Permutations & Combinations',
+    'Probability & Bayes Theorem',
+    'Sets, Relations & Functions',
+  ]},
+  {title:'Maths – Geometry',sub:'math',items:[
+    'Straight Lines – all forms',
+    'Circles – tangents, chords',
+    'Parabola & Ellipse',
+    'Hyperbola',
+    'Vectors – dot & cross products',
+    '3D Geometry – lines & planes',
+    'Trigonometry & Inverse Trig',
+  ]},
+];
+
+// ─── BUILD WEEKS ─────────────────────────────────────────────────
+const acCls = {chem:'ac-chem',phys:'ac-phys',math:'ac-math',rest:'ac-rest'};
+const tcCls = {chem:'tc-chem',phys:'tc-phys',math:'tc-math',rest:'tc-rest'};
+const subLbl = {chem:'Chemistry',phys:'Physics',math:'Maths',rest:'Rest/Mock'};
+
+function buildWeek(wk, containerId, offset){
+  const days = weeks[wk];
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  days.forEach((day, i) => {
+    const date = dateFromStart(offset + i);
+    const today = isToday(date);
+    
+    let sHTML = '';
+    day.sessions.forEach((s, si) => {
+      const key = `${wk}-${i}-${si}`;
+      const done = localStorage.getItem(key) === '1';
+      
+      sHTML += `
+      <div class="session">
+        <div class="session-accent ${acCls[s.sub] || 'ac-rest'}" style="min-height:24px"></div>
+        <div class="session-body">
+          <div class="checkbox-wrap ${done ? 'done' : ''}" 
+               id="wrap-${key}" 
+               onclick="toggleSess('${key}', '${wk}', ${i})">
+            <div class="custom-cb">
+              <svg class="check-icon" width="9" height="7" viewBox="0 0 9 7" fill="none" style="display: ${done ? 'block' : 'none'}">
+                <path d="M1 3.5L3.5 6L8 1" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div style="flex:1">
+              <div class="session-label">
+                <span class="session-subject ${tcCls[s.sub] || 'tc-rest'}">${subLbl[s.sub] || s.sub}</span>
+                <span class="session-time-chip">⏱ ${s.time}</span>
+              </div>
+              <div class="session-topic">${s.topic}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    const doneCount = day.sessions.filter((_, si) => localStorage.getItem(`${wk}-${i}-${si}`) === '1').length;
+    const pct = day.sessions.length ? Math.round(doneCount / day.sessions.length * 100) : 0;
+
+    el.innerHTML += `
+    <div class="day-card ${today ? 'today' : ''}">
+      <div class="day-head">
+        <div>
+          <div class="day-name">${fmtDate(date)}</div>
+          <div class="day-meta">${today ? 'Today · ' : ''}${day.sessions.length} sessions</div>
+        </div>
+        ${today ? '<div class="today-badge">Today</div>' : ''}
+      </div>
+      <div class="day-prog-bar"><div class="day-prog-fill" id="dpf-${wk}-${i}" style="width:${pct}%"></div></div>
+      <div class="session-list">${sHTML}</div>
+    </div>`;
+  });
+}
+
+function toggleSess(key, wk, di) {
+  const el = document.getElementById(`wrap-${key}`);
+  const isDone = !el.classList.contains('done');
+  
+  // Toggle UI classes
+  el.classList.toggle('done', isDone);
+  
+  // Toggle Checkmark Visibility
+  const icon = el.querySelector('.check-icon');
+  icon.style.display = isDone ? 'block' : 'none';
+  
+  // Save state
+  localStorage.setItem(key, isDone ? '1' : '0');
+  
+  // Update Day Progress
+  const day = weeks[wk][di];
+  const doneCount = day.sessions.filter((_, si) => localStorage.getItem(`${wk}-${di}-${si}`) === '1').length;
+  const pct = day.sessions.length ? Math.round(doneCount / day.sessions.length * 100) : 0;
+  
+  const fill = document.getElementById(`dpf-${wk}-${di}`);
+  if (fill) fill.style.width = pct + '%';
+  
+  updateProgress();
+}
+
+// ─── BUILD CHECKLIST ─────────────────────────────────────────────
+function buildChecklist(){
+  const root = document.getElementById('checklist-root');
+  root.innerHTML='';
+  const cols={chem:'var(--chem)',phys:'var(--phys)',math:'var(--math)'};
+  
+  topicsData.forEach((cat, ci) => {
+    const col = cols[cat.sub] || '#fff';
+    const doneCount = cat.items.filter((_, ii) => localStorage.getItem(`cl-${ci}-${ii}`) === '1').length;
+    const pct = cat.items.length ? Math.round(doneCount / cat.items.length * 100) : 0;
+    
+    let items = '';
+    cat.items.forEach((item, ii) => {
+      const key = `cl-${ci}-${ii}`;
+      const isDone = localStorage.getItem(key) === '1';
+      
+      items += `
+      <div class="checklist-item ${isDone ? 'done' : ''}" 
+           id="item-${key}" 
+           onclick="toggleCL('${key}', ${ci}, ${ii})">
+        <div class="cl-cb" id="cb-${key}">${isDone ? '✓' : ''}</div>
+        <span>${item}</span>
+      </div>`;
+    });
+
+    root.innerHTML += `
+    <div class="checklist-card">
+      <div class="checklist-head">
+        <h3><div class="hdot" style="background:${col}"></div>${cat.title}</h3>
+        <div class="cl-pct-badge" id="cl-pct-${ci}" 
+             style="color:${col}; background:rgba(255,255,255,0.05)">${pct}%</div>
+      </div>
+      <div class="cl-track">
+        <div class="cl-fill" id="cl-fill-${ci}" 
+             style="width:${pct}%; background:${col}"></div>
+      </div>
+      <div class="cl-items">${items}</div>
+    </div>`;
+  });
+}
+function toggleCL(key, ci, ii) {
+  const itemEl = document.getElementById(`item-${key}`);
+  const cbEl = document.getElementById(`cb-${key}`);
+  
+  const isDoneNow = !itemEl.classList.contains('done');
+  
+  // Toggle UI
+  itemEl.classList.toggle('done', isDoneNow);
+  cbEl.textContent = isDoneNow ? '✓' : '';
+  
+  // Save to LocalStorage
+  localStorage.setItem(key, isDoneNow ? '1' : '0');
+  
+  // Recalculate Category Progress
+  const cat = topicsData[ci];
+  const doneCount = cat.items.filter((_, idx) => localStorage.getItem(`cl-${ci}-${idx}`) === '1').length;
+  const pct = cat.items.length ? Math.round(doneCount / cat.items.length * 100) : 0;
+  
+  // Update Category Bars and Badges
+  const fill = document.getElementById(`cl-fill-${ci}`);
+  const badge = document.getElementById(`cl-pct-${ci}`);
+  if (fill) fill.style.width = pct + '%';
+  if (badge) badge.textContent = pct + '%';
+  
+  // Update Global Stats in Overview
+  updateProgress();
+}
+// ─── PROGRESS ────────────────────────────────────────────────────
+const weekKeys=['week1','week2','week3','week4','week5'];
+
+function countSess(wk){
+  let t=0,d=0;
+  weeks[wk].forEach((day,i)=>day.sessions.forEach((_,si)=>{ t++; if(localStorage.getItem(`${wk}-${i}-${si}`)==='1') d++; }));
+  return {t,d};
+}
+
+function updateProgress(){
+  let tAll=0,dAll=0;
+  weekKeys.forEach(k=>{ const r=countSess(k); tAll+=r.t; dAll+=r.d; });
+  document.getElementById('ov-done').textContent=dAll;
+  document.getElementById('ov-sub').textContent=`of ${tAll} total sessions`;
+
+  let tT=0,dT=0;
+  topicsData.forEach((cat,ci)=>cat.items.forEach((_,ii)=>{ tT++; if(localStorage.getItem(`cl-${ci}-${ii}`)==='1') dT++; }));
+  document.getElementById('ov-topics').textContent=dT;
+  document.getElementById('ov-topics-sub').textContent=`of ${tT} total topics`;
+
+  function subPct(sub){
+    let t=0,d=0;
+    weekKeys.forEach(wk=>weeks[wk].forEach((day,i)=>day.sessions.forEach((s,si)=>{ if(s.sub===sub){ t++; if(localStorage.getItem(`${wk}-${i}-${si}`)==='1') d++; } })));
+    return t?Math.round(d/t*100):0;
+  }
+  ['chem','phys','math'].forEach(sub=>{
+    const pct=subPct(sub);
+    const bar=document.getElementById(`bar-${sub}`);
+    const lbl=document.getElementById(`pct-${sub}`);
+    if(bar) bar.style.width=pct+'%';
+    if(lbl) lbl.textContent=pct+'%';
+  });
+
+  weekKeys.forEach((wk,i)=>{
+    const {t,d}=countSess(wk);
+    const pct=t?Math.round(d/t*100):0;
+    const el=document.getElementById(`wp${i+1}`);
+    const fill=document.getElementById(`wpf${i+1}`);
+    if(el) el.textContent=pct+'%';
+    if(fill) fill.style.width=pct+'%';
+  });
+}
+
+// ─── PANEL ───────────────────────────────────────────────────────
+function showPanel(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+buildWeek('week1','week1-days',0);
+buildWeek('week2','week2-days',7);
+buildWeek('week3','week3-days',14);
+buildWeek('week4','week4-days',21);
+buildWeek('week5','week5-days',28);
+buildChecklist();
+updateProgress();
+</script>
+</body>
+</html>
